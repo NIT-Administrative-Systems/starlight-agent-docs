@@ -78,6 +78,29 @@ test("converts rendered callouts, review questions, every tab, code, tables, and
     assert.doesNotMatch(result.markdown, /Navigation|Edit page|Copy code|unexpectedScript|Section titled/);
 });
 
+test("converts file trees to nested lists and drops screen-reader-only code frame titles", async () => {
+    const result = await convertPage(
+        fixture(`
+        <h1>Example</h1>
+        <figure class="frame is-terminal"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="sh"><code><div class="ec-line"><div class="code">pnpm build</div></div></code></pre></figure>
+        <starlight-file-tree><ul>
+            <li class="directory"><details open><summary><span class="tree-entry"><span class="sr-only">Directory</span><svg></svg>dist/
+            </span></summary><ul>
+                <li class="file"><span class="tree-entry"><svg></svg>llms.txt</span></li>
+                <li class="directory"><details open><summary><span class="tree-entry"><span class="sr-only">Directory</span><svg></svg>guides/</span></summary><ul>
+                    <li class="file"><span class="tree-entry">index.md</span></li>
+                </ul></details></li>
+            </ul></details></li>
+        </ul></starlight-file-tree>
+    `),
+        config.site,
+    );
+    assert.ok(result);
+    assert.match(result.markdown, /\* dist\/\n\s+\* llms\.txt\n\s+\* guides\/\n\s+\* index\.md/);
+    assert.doesNotMatch(result.markdown, /Terminal window|Directory|>/);
+    assert.match(result.markdown, /```sh\npnpm build\n```/);
+});
+
 test("exports homepage hero content even when the title is not rendered", async () => {
     const result = await convertPage(
         fixture(`

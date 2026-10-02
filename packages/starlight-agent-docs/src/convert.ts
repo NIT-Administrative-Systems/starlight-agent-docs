@@ -27,6 +27,27 @@ function text(node: RootContent): string {
     return node.children.map(text).join("");
 }
 
+function withoutScreenReaderText(parent: Element): void {
+    parent.children = parent.children.filter((node) => node.type !== "element" || !classes(node).includes("sr-only"));
+    for (const child of parent.children) if (child.type === "element") withoutScreenReaderText(child);
+}
+
+// A file tree directory is a <details> in the page, but it is just a nested list item in Markdown.
+function flattenDirectory(item: Element): void {
+    const details = item.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "details",
+    );
+    if (!details) return;
+    const summary = details.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "summary",
+    );
+    const label = summary ? text(summary).trim() : "";
+    item.children = [
+        { type: "text", value: label },
+        ...details.children.filter((child) => child !== summary && child.type === "element"),
+    ];
+}
+
 function paragraph(value: string): Element {
     return {
         type: "element",
@@ -121,6 +142,8 @@ export async function convertPage(html: string, site: string): Promise<{ page: P
             }
             const label =
                 node.properties.role === "tabpanel" ? tabs.get(String(node.properties.ariaLabelledBy)) : undefined;
+            if (node.tagName === "figcaption" || node.tagName === "starlight-file-tree") withoutScreenReaderText(node);
+            if (node.tagName === "li" && classNames.includes("directory")) flattenDirectory(node);
             clean(node);
             if (classNames.includes("open-question__question")) node.children.unshift({ type: "text", value: " - " });
             if (label) node.children.unshift(paragraph(label));
