@@ -3,7 +3,7 @@ run-name: 🚀 Create Release ${{ inputs.version }}
 
 env:
   NODE_VERSION: "24"
-  PNPM_VERSION: "10.x.x"
+  PNPM_VERSION: "12.x.x"
 
 on:
   workflow_dispatch:

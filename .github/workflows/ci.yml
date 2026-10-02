@@ -2,7 +2,7 @@ name: 🔍 CI
 
 env:
   NODE_VERSION: "24"
-  PNPM_VERSION: "10.x.x"
+  PNPM_VERSION: "12.x.x"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
