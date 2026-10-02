@@ -5,6 +5,8 @@ All notable changes to this package are documented here. The format follows
 
 ## [Unreleased]
 
+## [v1.0.0] - 2026-10-02
+
 ### Added
 
-- Initial extraction from the SDCC documentation site.
+- Initial release of the package.

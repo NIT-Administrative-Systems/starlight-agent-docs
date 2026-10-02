@@ -36,7 +36,6 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
@@ -49,6 +48,35 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
           registry-url: "https://registry.npmjs.org/"
+
+      - name: Check package.json version matches the release
+        env:
+          VERSION: ${{ inputs.version }}
+        working-directory: packages/starlight-agent-docs
+        run: |
+          EXPECTED=${VERSION#v}
+          ACTUAL=$(node -p "require('./package.json').version")
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error title=package.json version mismatch::Releasing $VERSION, but packages/starlight-agent-docs/package.json is at version $ACTUAL."
+            echo "To fix this:"
+            echo "  1. Set \"version\" to \"$EXPECTED\" in packages/starlight-agent-docs/package.json."
+            echo "  2. Update packages/starlight-agent-docs/CHANGELOG.md for $EXPECTED."
+            echo "  3. Merge those changes to main, then re-run this workflow."
+            exit 1
+          fi
+
+      - name: Check CHANGELOG.md has an entry for the release
+        env:
+          VERSION: ${{ inputs.version }}
+        working-directory: packages/starlight-agent-docs
+        run: |
+          EXPECTED=${VERSION#v}
+          if ! grep -Fq "## [$EXPECTED]" CHANGELOG.md; then
+            echo "::error title=CHANGELOG.md entry missing::No \"## [$EXPECTED]\" heading found in packages/starlight-agent-docs/CHANGELOG.md."
+            echo "To fix this, rename the \"## [Unreleased]\" heading to \"## [$EXPECTED] - $(date -u +%Y-%m-%d)\" (or add a new section),"
+            echo "merge the change to main, then re-run this workflow."
+            exit 1
+          fi
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
@@ -89,30 +117,6 @@ jobs:
             fi
           fi
 
-      - name: Update package version
-        env:
-          VERSION: ${{ inputs.version }}
-        working-directory: packages/starlight-agent-docs
-        run: |
-          NEW_VERSION=${VERSION#v}
-          CURRENT_VERSION=$(node -e "import('./package.json',{with:{type:'json'}}).then(m=>process.stdout.write(m.default.version))")
-          if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
-            npm version "$NEW_VERSION" --no-git-tag-version
-            echo "Updated package.json from $CURRENT_VERSION to $NEW_VERSION"
-          fi
-
-      - name: Commit version bump (if changed)
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          if ! git diff --quiet packages/starlight-agent-docs/package.json; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add packages/starlight-agent-docs/package.json
-            git commit -m "chore: bump version to ${VERSION#v}"
-            git push origin main
-          fi
-
       - name: Create tag
         env:
           VERSION: ${{ inputs.version }}
@@ -125,7 +129,7 @@ jobs:
       - name: Create GitHub release
         env:
           VERSION: ${{ inputs.version }}
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$VERSION" \
             --title "$VERSION" \
