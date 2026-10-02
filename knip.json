@@ -1,0 +1,18 @@
+{
+    "$schema": "https://unpkg.com/knip@6/schema.json",
+    "workspaces": {
+        ".": {
+            "entry": ["tests/consumer-types/fixture.ts"],
+            "project": ["tests/consumer-types/**/*.ts"]
+        },
+        "packages/starlight-agent-docs": {
+            "entry": [
+                "src/dev-index.ts",
+                "src/dev-route.ts",
+                "src/route-middleware.ts",
+                "src/components/MarkdownEditLink.astro"
+            ],
+            "ignoreIssues": { "src/dev-route.ts": ["duplicates"] }
+        }
+    }
+}

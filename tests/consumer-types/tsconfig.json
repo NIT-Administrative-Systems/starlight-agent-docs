@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "paths": {
+            "@nu-appdev/starlight-agent-docs": ["../../packages/starlight-agent-docs/dist/index.d.ts"]
+        }
+    },
+    "include": ["./fixture.ts"]
+}

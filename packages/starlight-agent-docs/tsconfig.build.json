@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "emitDeclarationOnly": true,
+        "declaration": true,
+        "declarationMap": true,
+        "composite": false,
+        "outDir": "dist"
+    },
+    "include": ["index.ts", "src/virtual.d.ts"]
+}

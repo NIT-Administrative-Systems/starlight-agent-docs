@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "declaration": true,
+        "declarationMap": true,
+        "composite": true
+    },
+    "include": ["index.ts", "src/**/*.ts", "src/**/*.astro", "src/**/*.d.ts"],
+    "exclude": ["node_modules", "dist"]
+}

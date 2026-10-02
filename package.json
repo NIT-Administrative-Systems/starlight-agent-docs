@@ -1,0 +1,30 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "verify": "pnpm fix && pnpm check:deps && pnpm test && pnpm test:integration",
+        "build:types": "pnpm --filter @nu-appdev/starlight-agent-docs build",
+        "fix": "biome check --write",
+        "check": "biome check",
+        "check:deps": "knip",
+        "test": "vitest run",
+        "test:integration": "node --test tests/integration/*.test.ts",
+        "test:watch": "vitest",
+        "test:consumer-types": "pnpm build:types && tsc --project tests/consumer-types/tsconfig.json --noEmit"
+    },
+    "devDependencies": {
+        "@astrojs/starlight": "^0.42.4",
+        "@biomejs/biome": "^2.5.14",
+        "@types/node": "^24.0.0",
+        "astro": "^7.3.5",
+        "knip": "^6.38.0",
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.2"
+    },
+    "engines": {
+        "node": ">= 24.0.0",
+        "npm": "please-use-pnpm",
+        "pnpm": ">= 10.0.0",
+        "yarn": "please-use-pnpm"
+    }
+}

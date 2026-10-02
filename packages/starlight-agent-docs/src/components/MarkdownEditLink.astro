@@ -1,0 +1,37 @@
+---
+import OriginalEditLink from "virtual:starlight-agent-docs/edit-link";
+import { Icon } from "@astrojs/starlight/components";
+import { markdownPath } from "../urls";
+
+const { id, entry } = Astro.locals.starlightRoute;
+const exported = id !== "404" && !id.endsWith("/404") && (import.meta.env.DEV || !entry.data.draft);
+const showMarkdownLink = exported && id !== "";
+---
+
+<div class="agent-docs-links">
+    <OriginalEditLink {...Astro.props} />
+    {showMarkdownLink && (
+        <a href={markdownPath(Astro.url.pathname)} class="print:hidden" data-agent-docs-link>
+            <Icon name="document" size="1.2em" />
+            {Astro.locals.t('agentDocs.markdown')}
+        </a>
+    )}
+</div>
+
+<style>
+    .agent-docs-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+    }
+    a {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        text-decoration: none;
+        color: var(--sl-color-gray-3);
+    }
+    a:hover {
+        color: var(--sl-color-white);
+    }
+</style>

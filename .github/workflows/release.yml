@@ -1,0 +1,137 @@
+name: 🚀 Create Release
+run-name: 🚀 Create Release ${{ inputs.version }}
+
+env:
+  NODE_VERSION: "24"
+  PNPM_VERSION: "10.x.x"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g., v1.0.0)"
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: 📦 Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Validate version format
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must match format v#.#.# (e.g., v1.0.0)"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Verify repository
+        run: pnpm verify
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Run integration tests
+        run: pnpm test:integration
+
+      - name: Run consumer typecheck
+        run: pnpm test:consumer-types
+
+      - name: Check version doesn't already exist
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if git tag -l | grep -qx "$VERSION"; then
+            echo "::error::Tag $VERSION already exists"
+            exit 1
+          fi
+
+      - name: Check version is newer than latest
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          LATEST=$(git tag -l 'v*' --sort=-v:refname | head -n1)
+          if [ -n "$LATEST" ]; then
+            LATEST_CLEAN=${LATEST#v}
+            NEW_CLEAN=${VERSION#v}
+            if ! printf '%s\n%s\n' "$LATEST_CLEAN" "$NEW_CLEAN" \
+                 | sort -V | tail -n1 | grep -qx "$NEW_CLEAN"; then
+              echo "::error::$VERSION is not newer than $LATEST"
+              exit 1
+            fi
+          fi
+
+      - name: Update package version
+        env:
+          VERSION: ${{ inputs.version }}
+        working-directory: packages/starlight-agent-docs
+        run: |
+          NEW_VERSION=${VERSION#v}
+          CURRENT_VERSION=$(node -e "import('./package.json',{with:{type:'json'}}).then(m=>process.stdout.write(m.default.version))")
+          if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
+            npm version "$NEW_VERSION" --no-git-tag-version
+            echo "Updated package.json from $CURRENT_VERSION to $NEW_VERSION"
+          fi
+
+      - name: Commit version bump (if changed)
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! git diff --quiet packages/starlight-agent-docs/package.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add packages/starlight-agent-docs/package.json
+            git commit -m "chore: bump version to ${VERSION#v}"
+            git push origin main
+          fi
+
+      - name: Create tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin --tags
+
+      - name: Create GitHub release
+        env:
+          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --notes "See [CHANGELOG.md](https://github.com/NIT-Administrative-Systems/starlight-agent-docs/blob/main/packages/starlight-agent-docs/CHANGELOG.md) for details." \
+            --verify-tag
+
+      - name: Publish to npm
+        working-directory: packages/starlight-agent-docs
+        run: pnpm publish --no-git-checks

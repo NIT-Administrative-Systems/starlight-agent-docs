@@ -1,0 +1,7 @@
+packages:
+  - "packages/*"
+  - "tests/fixtures/*"
+# 3 days, in minutes
+minimumReleaseAge: 4320
+allowBuilds:
+  esbuild: false

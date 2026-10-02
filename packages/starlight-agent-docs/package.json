@@ -1,0 +1,60 @@
+{
+    "name": "@nu-appdev/starlight-agent-docs",
+    "version": "0.0.0",
+    "description": "A Starlight plugin that publishes Markdown versions of every page and an llms.txt index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NIT-Administrative-Systems/starlight-agent-docs.git",
+        "directory": "packages/starlight-agent-docs"
+    },
+    "homepage": "https://github.com/NIT-Administrative-Systems/starlight-agent-docs#readme",
+    "bugs": {
+        "url": "https://github.com/NIT-Administrative-Systems/starlight-agent-docs/issues"
+    },
+    "keywords": [
+        "astro",
+        "starlight",
+        "plugin",
+        "llms.txt",
+        "markdown",
+        "agents",
+        "documentation"
+    ],
+    "type": "module",
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./index.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json --noCheck",
+        "prepublishOnly": "pnpm build"
+    },
+    "files": [
+        "CHANGELOG.md",
+        "dist/",
+        "index.ts",
+        "src/"
+    ],
+    "dependencies": {
+        "rehype-parse": "^9.0.1",
+        "rehype-remark": "^10.0.1",
+        "remark-gfm": "^4.0.1",
+        "remark-stringify": "^11.0.0",
+        "unified": "^11.0.5"
+    },
+    "peerDependencies": {
+        "@astrojs/starlight": "^0.42.0",
+        "astro": "^7.2.10"
+    },
+    "devDependencies": {
+        "@astrojs/starlight": "^0.42.4",
+        "@types/hast": "^3.0.5",
+        "astro": "^7.3.5"
+    }
+}
