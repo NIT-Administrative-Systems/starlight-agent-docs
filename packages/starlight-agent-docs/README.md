@@ -1,4 +1,4 @@
-## Starlight Agent Docs
+# Starlight Agent Docs
 
 This plugin implements the [`llms.txt`](https://llmstxt.org/) standard, providing markdown versions of pages and an `llms.txt` sitemap for agents to use. It is designed to work on any static hosting service, so it does not rely on responding with `Link` headers or an `Accepts: text/markdown` in the request.
 
@@ -20,31 +20,27 @@ pnpm add @nu-appdev/starlight-agent-docs
 Import the plugin in `astro.config.mjs` and add it to Starlight's `plugins`:
 
 - Ensure the `site` setting is configured. This is the base URL that will be used in `/llms.txt`
-- Register `starlightAgentDocs()` **after** any themes or plugin that overrides `EditLink`
+- Register `starlightAgentDocs()` **after** any theme or plugin that overrides `EditLink`
 
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import northwesternTheme from '@nu-appdev/northwestern-starlight-theme';
 import starlightAgentDocs from '@nu-appdev/starlight-agent-docs';
 
 export default defineConfig({
-    site: 'https://sdcc.entapp.northwestern.edu',
+    site: 'https://docs.example.com',
     integrations: [
         starlight({
-            title: 'SDCC Docs',
-            description: 'Standards and recommendations for the IT@NU community.',
+            title: 'Example Docs',
+            description: 'Documentation for Example.',
             sidebar: [
-                { label: 'Introduction', items: [{ autogenerate: { directory: 'introduction' } }] },
-                { label: 'Coding Standards', items: [{ autogenerate: { directory: 'coding-standards' } }] },
-                { label: 'Appendices', items: [{ autogenerate: { directory: 'appendix' } }] },
+                { label: 'Guides', items: [{ autogenerate: { directory: 'guides' } }] },
+                { label: 'Reference', items: [{ autogenerate: { directory: 'reference' } }] },
             ],
             plugins: [
-                northwesternTheme(),
                 starlightAgentDocs({
-                    guidance: 'Use the requirement-level definitions when interpreting MUST, SHOULD, and MAY. Pages marked as drafts are not approved requirements.',
-                    fallbackSection: 'Other documentation',
+                    guidance: 'Start with the guides before reading the reference.',
                 }),
             ],
         }),
