@@ -6,10 +6,16 @@ import { generateLlms } from "./llms.ts";
 import type { Page } from "./types.ts";
 import { basePath, entryPath, htmlPath, indexPath, markdownPath } from "./urls.ts";
 
+// Structural type: the consumer's generated collection types are not available when compiling the package.
+interface DocsEntry {
+    id: string;
+    data: { title: string; description?: string };
+}
+
 export const prerender = true;
 
 export async function getStaticPaths() {
-    const docs = await getCollection("docs");
+    const docs: DocsEntry[] = await getCollection("docs");
     return docs
         .filter((entry) => entry.id !== "404" && !entry.id.endsWith("/404"))
         .map((entry) => {
@@ -21,7 +27,7 @@ export async function getStaticPaths() {
 export const GET: APIRoute = async (context) => {
     const path = context.url.pathname;
     if (path === indexPath(config.base)) {
-        const docs = await getCollection("docs");
+        const docs: DocsEntry[] = await getCollection("docs");
         const pages: Page[] = docs
             .filter((entry) => entry.id !== "404" && !entry.id.endsWith("/404"))
             .map((entry) => {

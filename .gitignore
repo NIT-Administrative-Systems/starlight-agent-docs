@@ -147,3 +147,5 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+# Scratch projects created by integration tests
+tests/fixtures/site/.cases/

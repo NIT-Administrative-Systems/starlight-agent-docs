@@ -8,7 +8,7 @@ import { readSidebar } from "./sidebar.ts";
 import { metadataName, type Page } from "./types.ts";
 
 function classes(node: Element): string[] {
-    const value = node.properties.className;
+    const value: unknown = node.properties.className;
     return Array.isArray(value) ? value.map(String) : typeof value === "string" ? value.split(/\s+/) : [];
 }
 
@@ -57,7 +57,7 @@ export function readPage(tree: Root): Page | undefined {
         title: value.title,
         htmlPath: value.htmlPath,
         markdownPath: value.markdownPath,
-        description: "description" in value ? value.description : undefined,
+        description: "description" in value && typeof value.description === "string" ? value.description : undefined,
         sidebar: "sidebar" in value ? readSidebar(value.sidebar) : undefined,
     };
 }

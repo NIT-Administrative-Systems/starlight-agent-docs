@@ -14,6 +14,7 @@ pnpm install
 pnpm test                  # Vitest unit tests
 pnpm test:integration      # Astro build + dev-server tests against the fixture site
 pnpm test:consumer-types   # Build declarations and type-check a consumer
+pnpm test:acceptance       # Pack the tarball, install it in a clean project, build a site (needs network)
 pnpm verify                # Fix lint, check deps, run unit + integration tests
 ```
 

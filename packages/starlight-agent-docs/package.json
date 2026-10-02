@@ -1,8 +1,8 @@
 {
     "name": "@nu-appdev/starlight-agent-docs",
     "version": "0.0.0",
-    "license": "MIT",
     "description": "A Starlight plugin that publishes Markdown versions of every page and an llms.txt index",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/NIT-Administrative-Systems/starlight-agent-docs.git",
@@ -26,6 +26,9 @@
         "access": "public",
         "provenance": true
     },
+    "engines": {
+        "node": ">=22.12.0"
+    },
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -34,7 +37,8 @@
     },
     "scripts": {
         "build": "tsc -p tsconfig.build.json --noCheck",
-        "prepublishOnly": "pnpm build"
+        "prepublishOnly": "pnpm build",
+        "typecheck": "tsc -p tsconfig.json --noEmit --composite false"
     },
     "files": [
         "CHANGELOG.md",
@@ -50,8 +54,8 @@
         "unified": "^11.0.5"
     },
     "peerDependencies": {
-        "@astrojs/starlight": "^0.42.0",
-        "astro": "^7.2.10"
+        "@astrojs/starlight": "^0.41.0 || ^0.42.0",
+        "astro": "^7.0.0"
     },
     "devDependencies": {
         "@astrojs/starlight": "^0.42.4",

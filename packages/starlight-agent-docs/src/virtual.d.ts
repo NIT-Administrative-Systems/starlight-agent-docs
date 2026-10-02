@@ -1,3 +1,5 @@
+/// <reference types="astro/client" />
+/// <reference types="@astrojs/starlight" />
 declare module "virtual:starlight-agent-docs/config" {
     export const config: import("./types").AgentDocsConfig;
 }

@@ -76,5 +76,45 @@ jobs:
       - name: Run Biome
         run: pnpm check
 
+      - name: Type-check source
+        run: pnpm typecheck
+
       - name: Check dependencies
         run: pnpm check:deps
+
+  acceptance:
+    name: "📦 Packed tarball (Starlight ${{ matrix.starlight }} / Astro ${{ matrix.astro }})"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - starlight: "0.41"
+            astro: "7"
+          - starlight: "0.42"
+            astro: "7"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Build, install the packed tarball in a clean project, and build a site
+        env:
+          STARLIGHT_VERSION: ${{ matrix.starlight }}
+          ASTRO_VERSION: ${{ matrix.astro }}
+        run: pnpm test:acceptance
