@@ -1,6 +1,6 @@
 {
     "name": "@nu-appdev/starlight-agent-docs",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Starlight plugin that publishes Markdown versions of every page and an llms.txt index",
     "license": "MIT",
     "repository": {

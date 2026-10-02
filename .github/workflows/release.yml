@@ -71,9 +71,9 @@ jobs:
         working-directory: packages/starlight-agent-docs
         run: |
           EXPECTED=${VERSION#v}
-          if ! grep -Fq "## [$EXPECTED]" CHANGELOG.md; then
-            echo "::error title=CHANGELOG.md entry missing::No \"## [$EXPECTED]\" heading found in packages/starlight-agent-docs/CHANGELOG.md."
-            echo "To fix this, rename the \"## [Unreleased]\" heading to \"## [$EXPECTED] - $(date -u +%Y-%m-%d)\" (or add a new section),"
+          if ! grep -Fq "## [$EXPECTED]" CHANGELOG.md && ! grep -Fq "## [v$EXPECTED]" CHANGELOG.md; then
+            echo "::error title=CHANGELOG.md entry missing::No \"## [$EXPECTED]\" or \"## [v$EXPECTED]\" heading found in packages/starlight-agent-docs/CHANGELOG.md."
+            echo "To fix this, rename the \"## [Unreleased]\" heading to \"## [v$EXPECTED] - $(date -u +%Y-%m-%d)\" (or add a new section),"
             echo "merge the change to main, then re-run this workflow."
             exit 1
           fi
