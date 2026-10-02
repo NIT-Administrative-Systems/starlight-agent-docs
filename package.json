@@ -20,7 +20,7 @@
     "devDependencies": {
         "@astrojs/starlight": "^0.42.4",
         "@biomejs/biome": "^2.5.14",
-        "@types/node": "^24.0.0",
+        "@types/node": "^26.6.3",
         "astro": "^7.3.5",
         "knip": "^6.38.0",
         "typescript": "^7.0.2",
