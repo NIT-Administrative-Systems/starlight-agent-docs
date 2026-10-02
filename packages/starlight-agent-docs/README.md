@@ -1,4 +1,4 @@
-## Agent-friendly Documentation
+## Starlight Agent Docs
 
 This plugin implements the [`llms.txt`](https://llmstxt.org/) standard, providing markdown versions of pages and an `llms.txt` sitemap for agents to use. It is designed to work on any static hosting service, so it does not rely on responding with `Link` headers or an `Accepts: text/markdown` in the request.
 

@@ -1,0 +1,26 @@
+---
+title: Configuration
+description: Options for starlightAgentDocs().
+---
+
+All plugin settings are optional. It will work without any configuration.
+
+```js
+starlightAgentDocs({
+    title: "Example Docs",
+    summary: "Documentation for Example.",
+    guidance: "Start with the guides before reading the reference.",
+    fallbackSection: "More documentation",
+});
+```
+
+## Options
+
+| Option            | Type     | Default                                                      | Purpose                                                                                                   |
+| ----------------- | -------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `title`           | `string` | Starlight's `title`; the first configured value if localized | Project name in the index's H1 heading.                                                                   |
+| `summary`         | `string` | Starlight's `description`, if set                            | Short site summary rendered as a blockquote below the title. An empty string omits it.                    |
+| `guidance`        | `string` | Omitted                                                      | Markdown guidance before the file lists. Paragraphs and lists are allowed, but Markdown headings are not. |
+| `fallbackSection` | `string` | `'Other documentation'`                                      | Section for published pages outside the sidebar groups.                                                   |
+
+A `guidance` value that contains a Markdown heading fails the build.

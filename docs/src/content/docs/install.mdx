@@ -1,0 +1,117 @@
+---
+title: Install
+description: Add the plugin to a Starlight site.
+---
+
+import { FileTree, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Add the package
+
+This is a Starlight plugin that requires Astro v7+.
+
+<Tabs syncKey="pkg">
+    <TabItem label="pnpm">
+
+    ```sh
+    pnpm add @nu-appdev/starlight-agent-docs
+    ```
+
+    </TabItem>
+    <TabItem label="npm">
+
+    ```sh
+    npm install @nu-appdev/starlight-agent-docs
+    ```
+
+    </TabItem>
+    <TabItem label="yarn">
+
+    ```sh
+    yarn add @nu-appdev/starlight-agent-docs
+    ```
+
+    </TabItem>
+</Tabs>
+
+## Register the plugin
+
+Import the plugin in `astro.config.mjs` and add it to Starlight's `plugins`.
+
+:::caution[Two things to get right]
+- Set Astro's `site`. It is the base URL used for the links in `/llms.txt`.
+- Register `starlightAgentDocs()` **after** any theme or plugin that overrides Starlight's `EditLink` component.
+:::
+
+
+```js
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import starlight from "@astrojs/starlight";
+import starlightAgentDocs from "@nu-appdev/starlight-agent-docs";
+
+export default defineConfig({
+    site: "https://docs.example.com",
+    integrations: [
+        starlight({
+            title: "Example Docs",
+            description: "Documentation for Example.",
+            sidebar: [
+                { label: "Guides", items: [{ autogenerate: { directory: "guides" } }] },
+                { label: "Reference", items: [{ autogenerate: { directory: "reference" } }] },
+            ],
+            plugins: [
+                starlightAgentDocs({
+                    guidance: "Start with the guides before reading the reference.",
+                }),
+            ],
+        }),
+    ],
+});
+```
+
+## Check the output
+
+Build the site. The plugin adds a `.md` file for each page and an `llms.txt` to the output directory.
+
+<Tabs syncKey="pkg">
+    <TabItem label="pnpm">
+
+    ```sh
+    pnpm build
+    ```
+
+    </TabItem>
+    <TabItem label="npm">
+
+    ```sh
+    npm run build
+    ```
+
+    </TabItem>
+    <TabItem label="yarn">
+
+    ```sh
+    yarn build
+    ```
+
+    </TabItem>
+</Tabs>
+
+<FileTree>
+
+- dist/
+  - llms.txt
+  - index.md
+  - guides/
+    - getting-started/
+      - index.html
+      - index.md
+
+</FileTree>
+
+During `astro dev`, the same URLs are served on the fly, and draft pages are included.
+
+:::note
+If a file in your `public/` directory has the same path as a generated Markdown file or `llms.txt`, the build fails
+instead of overwriting it.
+:::

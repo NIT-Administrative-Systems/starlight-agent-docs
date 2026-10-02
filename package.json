@@ -12,7 +12,10 @@
         "test:acceptance": "node --test --test-timeout=300000 tests/acceptance/*.test.ts",
         "test:watch": "vitest",
         "test:consumer-types": "pnpm build:types && tsc --project tests/consumer-types/tsconfig.json --noEmit",
-        "typecheck": "pnpm --filter @nu-appdev/starlight-agent-docs typecheck"
+        "typecheck": "pnpm --filter @nu-appdev/starlight-agent-docs typecheck",
+        "docs:dev": "pnpm --filter docs dev",
+        "docs:build": "pnpm --filter docs build",
+        "docs:preview": "pnpm --filter docs preview"
     },
     "devDependencies": {
         "@astrojs/starlight": "^0.42.4",

@@ -149,3 +149,6 @@ vite.config.ts.timestamp-*
 .turbo
 # Scratch projects created by integration tests
 tests/fixtures/site/.cases/
+
+# Docs site build output
+docs/dist/

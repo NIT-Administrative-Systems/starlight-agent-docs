@@ -1,0 +1,29 @@
+---
+title: Starlight Agent Docs
+description: Publish Markdown versions of every Starlight page and an llms.txt index for AI agents.
+template: splash
+hero:
+    tagline: Make your Starlight documentation easy for agents to read, on any static host.
+    actions:
+        - text: Install
+          link: /install/
+          icon: right-arrow
+        - text: Configuration
+          link: /configuration/
+          variant: minimal
+---
+
+This plugin implements the [`llms.txt`](https://llmstxt.org/) standard, providing Markdown versions of your pages and an `llms.txt` sitemap for agents to use. It is designed to work on any static hosting service, so it does not rely on responding with `Link` headers or an `Accept: text/markdown` request header.
+
+## How it works
+
+It converts the **rendered HTML** to Markdown, instead of republishing the source Markdown/MDX. That helps with custom components and non-Markdown pages: as long as the HTML produced by an `.astro` file is accessible, it should produce reasonable Markdown.
+
+## What you get
+
+- A `.md` version of every page, built alongside the HTML.
+- A _View as Markdown_ footer link, so people can easily grab a page and feed it to an agent.
+- A `<link rel="alternate" type="text/markdown">` in each page's `<head>`, telling agents that read the HTML there is a better format available.
+- A `/llms.txt` index with basic guidance and a site map, grouped by your sidebar.
+
+This site uses the plugin itself. Try [the Markdown version of this page](/index.md) or the [`llms.txt`](/llms.txt).
